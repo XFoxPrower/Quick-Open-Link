@@ -2,29 +2,66 @@
 'use strict';
 function quickOpenLink()
 	{
-	function openLink(e)
+	function checkClick(e)
 		{
-		const
-			link=e.target.parentNode;
-		if(e.ctrlKey&&link.parentNode.className=='attachment-image')
+		function modalObserver(m)
 			{
-			open(link.href);
+			const
+				mut=m[0];
+			if(mut.addedNodes.length)
+				{
+				modalStyle.display='none';
+				modalCont.firstChild.click();
+				}
+			else
+				{
+				if(mut.removedNodes.length)
+					{
+					this.disconnect();
+					setTimeout
+						(
+						function()
+							{
+							modalStyle.display='';
+							},
+						500
+						);
+					}
+				}
+			}
+		var
+			node;
+		if(e.ctrlKey)
+			{
+			node=e.target;
+			if(node.nodeName=='IMG')
+				{
+				node=node.parentNode;
+				if(node.nodeName=='A')
+					{
+					open(node.href);
+					new MutationObserver(modalObserver).observe(modalCont,{childList:1});
+					}
+				}
 			}
 		}
 	const
 		_=this,
-		D=document;
+		root=document.getElementById('app-mount'),
+		section=root.getElementsByTagName('section')[0],
+		modalCont=root.getElementsByClassName('modal-container')[0],
+		modalStyle=modalCont.style;
 	_.getName=()=>'Quick Link Open';
 	_.getDescription=()=>'Ctrl+Click to open attachments in your browser';
-	_.getVersion=()=>'0.1';
+	_.getVersion=()=>'0.2';
 	_.getAuthor=()=>'XFox Prower';
 	_.load=function(){};
 	_.start=function()
 		{
-		D.addEventListener('click',openLink);
+		section.addEventListener('click',checkClick);
 		};
 	_.stop=function()
 		{
-		D.removeEventListener('click',openLink);
+		section.removeEventListener('click',checkClick);
 		};
 	}
