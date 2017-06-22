@@ -8,24 +8,18 @@ function quickOpenLink()
 			{
 			const
 				mut=m[0];
+			var
+				modal,
+				backdrop;
 			if(mut.addedNodes.length)
 				{
-				modalStyle.display='none';
-				modalCont.firstChild.click();
-				}
-			else
-				{
-				if(mut.removedNodes.length)
+				modal=root.getElementsByClassName('modal-image')[0];
+				if(modal)
 					{
 					this.disconnect();
-					setTimeout
-						(
-						function()
-							{
-							modalStyle.display='';
-							},
-						500
-						);
+					backdrop=root.getElementsByClassName('callout-backdrop')[0];
+					backdrop.style.display=modal.style.display='none';
+					backdrop.click();
 					}
 				}
 			}
@@ -40,7 +34,7 @@ function quickOpenLink()
 				if(node.nodeName=='A')
 					{
 					open(node.href);
-					new MutationObserver(modalObserver).observe(modalCont,{childList:1});
+					new MutationObserver(modalObserver).observe(root,{childList:1,subtree:1});
 					}
 				}
 			}
@@ -48,14 +42,12 @@ function quickOpenLink()
 	const
 		_=this,
 		root=document.getElementById('app-mount'),
-		section=root.getElementsByTagName('section')[0],
-		modalCont=root.getElementsByClassName('modal-container')[0],
-		modalStyle=modalCont.style;
+		section=root.getElementsByTagName('section')[0];
 	_.getName=()=>'Quick Link Open';
 	_.getDescription=()=>'Ctrl+Click to open attachments in your browser';
-	_.getVersion=()=>'0.2';
+	_.getVersion=()=>'0.3';
 	_.getAuthor=()=>'XFox Prower';
-	_.load=function(){};
+	_.load=()=>{};
 	_.start=function()
 		{
 		section.addEventListener('click',checkClick);
